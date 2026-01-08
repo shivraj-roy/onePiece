@@ -5,6 +5,7 @@ import {
    fluidFragmentShader,
    displayFragmentShader,
 } from "./shaders.js";
+import MusicToggle from "./MusicToggle";
 import "./App.css";
 
 function App() {
@@ -90,7 +91,12 @@ function App() {
       });
 
       loadImage("/luffy-top.png", topTextureSize, displayMaterial, true);
-      loadImage("/luffyElbaph-bottom.png", bottomTextureSize, displayMaterial, false);
+      loadImage(
+         "/luffyElbaph-bottom.png",
+         bottomTextureSize,
+         displayMaterial,
+         false
+      );
 
       const planeGeometry = new THREE.PlaneGeometry(2, 2);
       const displayMesh = new THREE.Mesh(planeGeometry, displayMaterial);
@@ -311,11 +317,16 @@ function App() {
       <>
          <nav>
             <div className="site-name">
-               <a href="#">One Piece</a>
+               <a href="#">
+                  <span className="site-name-main">One Piece</span>
+                  <div className="site-name-sub-wrapper">
+                     <div className="decorative-line decorative-line-left"></div>
+                     <span className="site-name-sub">Elbaph Arc</span>
+                     <div className="decorative-line decorative-line-right"></div>
+                  </div>
+               </a>
             </div>
-            <div className="menu">
-               <p>Menu</p>
-            </div>
+            <MusicToggle />
          </nav>
 
          <section className="hero">

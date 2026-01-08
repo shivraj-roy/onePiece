@@ -9,9 +9,13 @@ This project creates an immersive visual experience where user movements generat
 ## Features
 
 - **GPU-Accelerated Fluid Simulation**: Custom GLSL shaders for real-time particle physics
+- **Idle Animation**: Automated brush strokes appear after 2 seconds of inactivity with synchronized timing
+- **Music Playback**: Interactive music toggle with GSAP-animated wave bars and smooth fade in/out
 - **Ping-Pong Rendering**: Advanced texture swapping technique for temporal effects
 - **Interactive Controls**: Full mouse and touch support with smooth trail generation
-- **Responsive Design**: Adapts to all screen sizes with high-DPI display support
+- **Smooth Transitions**: Idle animations fade out gracefully when user interacts
+- **Custom Typography**: Amanojaku and Electroharmonix fonts for distinctive branding
+- **Responsive Design**: Fully responsive layout optimized for desktop, tablet, and mobile devices
 - **Image Blending**: Seamless transitions between images based on fluid intensity
 - **Aspect Ratio Preservation**: CSS-like "cover" behavior for proper image scaling
 
@@ -19,6 +23,7 @@ This project creates an immersive visual experience where user movements generat
 
 - **React 19** - UI framework with hooks
 - **Three.js 0.182** - WebGL rendering engine
+- **GSAP** - Animation library for smooth UI transitions
 - **Vite 7** - Fast build tool with HMR
 - **GLSL** - Custom vertex and fragment shaders
 - **ESLint** - Code quality and linting
@@ -30,12 +35,17 @@ onePiece/
 ├── src/
 │   ├── main.jsx              # React entry point
 │   ├── App.jsx               # Main component with WebGL logic
+│   ├── MusicToggle.jsx       # Music player toggle component
 │   ├── shaders.js            # GLSL shader definitions
 │   ├── App.css               # Component styling
+│   ├── MusicToggle.css       # Music toggle styling
 │   └── index.css             # Global styles
 ├── public/
-│   ├── luffy-top.png         # Top blending image
-│   └── luffy-bottom.png      # Bottom blending image
+│   ├── luffy-top.png              # Top blending image
+│   ├── luffyElbaph-bottom.png     # Bottom blending image (Elbaf arc)
+│   ├── OnePieceOvertaken.mp3      # Background music track
+│   ├── Amanojaku.otf              # Custom font (subtitle)
+│   └── Electroharmonix.otf        # Custom font (main title)
 ├── index.html                # HTML entry point
 ├── package.json              # Dependencies and scripts
 ├── vite.config.js            # Vite configuration
@@ -69,7 +79,82 @@ trails = min(trails + intensity, 1.0);
 - Uses `smoothstep` for anti-aliased brush edges
 - Stores intensity in red channel
 
-### 2. Ping-Pong Rendering Pattern
+### 2. Idle Animation System
+
+When the user is inactive for 2+ seconds, automated brush strokes animate across the screen:
+
+```glsl
+// Synchronized timing for 2 strokes
+float strokeDuration = 2.5;  // 2.5 seconds active
+float pauseDuration = 5.5;   // 5.5 seconds pause
+float totalCycle = strokeDuration + pauseDuration; // 8s total
+
+float cycleTime = mod(uTime, totalCycle);
+
+// Skip during pause period
+if (cycleTime > strokeDuration) {
+  continue;
+}
+
+float progress = cycleTime / strokeDuration;
+```
+
+**Key features:**
+- **Timed cycles**: 2.5s animation + 5.5s pause (8s total)
+- **Synchronized strokes**: Both strokes animate together
+- **Random directions**: Strokes move left-to-right or right-to-left
+- **Variable paths**: Start/end positions randomized (can begin/end mid-screen)
+- **Smooth fade-out**: When user moves, strokes fade via exponential decay (multiplier *= 0.85)
+- **Centered placement**: Positioned at Y=0.4 and Y=0.6 for vertical spacing
+
+**Fade-out logic (App.jsx):**
+```javascript
+if (currentFade > 0.01) {
+  const newFade = currentFade * 0.85;  // Fast exponential decay
+  trailsMaterial.uniforms.uIdleFadeOut.value = newFade;
+  idleAnimationActive = true;  // Keep shader running during fade
+}
+```
+
+### 3. Music Toggle Component (MusicToggle.jsx)
+
+Interactive music player with GSAP-animated visualizer bars:
+
+**Visual States:**
+- **Off**: 5 bars collapsed to flat line (scaleY: 0.15)
+- **On**: Bars animate to wave pattern with random heights (0.4-1.5)
+
+**Audio Features:**
+```javascript
+// Fade in (1.5s to 60% volume)
+gsap.to(audioRef.current, {
+  volume: 0.6,
+  duration: 1.5,
+  ease: 'power2.inOut',
+});
+
+// Fade out (1.0s to 0%)
+gsap.to(audioRef.current, {
+  volume: 0,
+  duration: 1.0,
+  ease: 'power2.inOut',
+  onComplete: () => audioRef.current.pause()
+});
+```
+
+**Natural ending:**
+- Monitors playback time via `timeupdate` event
+- Starts 3-second fade out when 3 seconds remain
+- Automatically stops toggle when track ends
+
+**Key implementation details:**
+- **Audio element**: Created once on mount with `/OnePieceOvertaken.mp3`
+- **GSAP animations**: Smooth volume transitions and bar movements
+- **Wave bars**: 5 vertical bars with continuous sine wave oscillation
+- **Staggered delays**: Each bar animates with slight offset for fluid motion
+- **Kill tweens**: Prevents animation conflicts when toggling quickly
+
+### 4. Ping-Pong Rendering Pattern
 
 Uses two render targets that alternate each frame:
 
@@ -88,7 +173,7 @@ renderer.render(simScene, camera);
 
 This allows shaders to read the previous frame's state while writing the new frame.
 
-### 3. Image Blending (displayFragmentShader)
+### 5. Image Blending (displayFragmentShader)
 
 The display shader blends two images based on fluid values:
 
@@ -112,7 +197,7 @@ gl_FragColor = mix(bottomColor, topColor, mask);
 - `getCoverUV` function preserves aspect ratios
 - Smooth transitions using `smoothstep`
 
-### 4. Interaction System
+### 6. Interaction System
 
 Captures and normalizes mouse/touch coordinates:
 
@@ -129,6 +214,34 @@ if (performance.now() - lastMoveTime > 50) {
     isMoving = false;
 }
 ```
+
+### 7. UI and Responsive Design
+
+**Site Name:**
+- **Main title**: "One Piece" in Electroharmonix font (4rem, red #cc2322)
+- **Subtitle**: "Elbaph Arc" with decorative lines on both sides
+- **Layout**: Vertical stacking with flexbox
+
+**Responsive breakpoints:**
+```css
+/* Tablet (≤768px) */
+.site-name-main { font-size: 2.5rem; }
+.site-name-sub { font-size: 1rem; }
+
+/* Mobile (≤480px) */
+.site-name-main { font-size: 2rem; }
+.site-name-sub { font-size: 0.85rem; }
+```
+
+**Custom Fonts:**
+- **Amanojaku.otf**: Subtitle font (commented out in current version)
+- **Electroharmonix.otf**: Main title font for dramatic effect
+
+**Music Toggle:**
+- Black button with white wave bars
+- 5 vertical bars (2.5px width, 18px height)
+- Hover opacity: 80%
+- Located in top-right navigation
 
 ## Installation
 
@@ -155,13 +268,34 @@ npm run lint
 
 Replace the images in `/public`:
 - `luffy-top.png` - Image shown when fluid is present
-- `luffy-bottom.png` - Image shown in areas without fluid
+- `luffyElbaph-bottom.png` - Image shown in areas without fluid
 
 Update paths in `App.jsx`:
 
 ```javascript
 loadImage("/luffy-top.png", topTextureSize, displayMaterial, true);
-loadImage("/luffy-bottom.png", bottomTextureSize, displayMaterial, false);
+loadImage("/luffyElbaph-bottom.png", bottomTextureSize, displayMaterial, false);
+```
+
+### Changing Music
+
+Replace the audio file in `/public`:
+- `OnePieceOvertaken.mp3` - Background music track
+
+Update path in `MusicToggle.jsx`:
+
+```javascript
+audioRef.current = new Audio('/OnePieceOvertaken.mp3');
+```
+
+Adjust volume level (default 60%):
+
+```javascript
+gsap.to(audioRef.current, {
+  volume: 0.6,  // Change from 0 (0%) to 1 (100%)
+  duration: 1.5,
+  ease: 'power2.inOut',
+});
 ```
 
 ### Adjusting Fluid Behavior
@@ -328,7 +462,13 @@ MIT License - Feel free to use and modify for your projects.
 
 ## Credits
 
-Built with React, Three.js, and modern WebGL techniques.
+Built with React, Three.js, GSAP, and modern WebGL techniques.
+
+**Features:**
+- Interactive fluid dynamics with GPU acceleration
+- Music playback with smooth GSAP animations
+- Custom typography (Amanojaku, Electroharmonix fonts)
+- Idle animations with timed brush strokes
 
 Portfolio 2025 - Elbaf Arc
 

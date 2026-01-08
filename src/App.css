@@ -1,72 +1,166 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Righteous&display=swap");
 
+@font-face {
+   font-family: "Amanojaku";
+   src: url("/Amanojaku.otf") format("opentype");
+   font-weight: normal;
+   font-style: normal;
+}
+
+@font-face {
+   font-family: "Electroharmonix";
+   src: url("/Electroharmonix.otf") format("opentype");
+   font-weight: normal;
+   font-style: normal;
+}
+
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
 }
 
 body {
-  font-family: "DM Mono";
+   font-family: "DM Mono";
 }
 
 a,
 p {
-  text-decoration: none;
-  text-transform: uppercase;
-  color: #000;
-  font-size: 0.85rem;
-  font-weight: 600;
-  line-height: 0.9;
-  display: block;
+   text-decoration: none;
+   text-transform: uppercase;
+   color: #000;
+   font-size: 0.85rem;
+   font-weight: 600;
+   line-height: 0.9;
+   display: block;
 }
 
 nav {
-  position: fixed;
-  width: 100%;
-  padding: 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  z-index: 2;
+   position: fixed;
+   width: 100%;
+   padding: 2rem;
+   display: flex;
+   justify-content: space-between;
+   align-items: flex-start;
+   z-index: 2;
 }
 
 .site-name a {
-  width: 4rem;
-  font-family: "Righteous";
-  font-size: 2rem;
+   display: flex;
+   flex-direction: column;
+   gap: 0.2rem;
+   /* font-family: "Amanojaku", "Righteous", sans-serif; */
+   line-height: 1;
 }
 
-.menu p {
-  padding: 0.75rem 1.25rem;
-  border-radius: 0.25rem;
-  background-color: #000;
-  color: #fff;
+.site-name-main {
+   font-size: 4rem;
+   color: #cc2322;
+   font-family: "Electroharmonix", "Righteous", sans-serif;
+}
+
+.site-name-sub-wrapper {
+   display: flex;
+   align-items: center;
+   gap: 1rem;
+   width: 100%;
+}
+
+.site-name-sub {
+   font-size: 1.5rem;
+   color: #000;
+   opacity: 0.8;
+   text-align: center;
+}
+
+.decorative-line {
+   flex: 1;
+   height: 4px;
+   background-color: #000;
+   opacity: 0.6;
 }
 
 .hero {
-  position: relative;
-  width: 100%;
-  height: 100svh;
-  overflow: hidden;
+   position: relative;
+   width: 100%;
+   height: 100svh;
+   overflow: hidden;
 }
 
 canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   z-index: 1;
 }
 
 .hero-footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  padding: 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  z-index: 2;
+   position: absolute;
+   bottom: 0;
+   width: 100%;
+   padding: 2rem;
+   display: flex;
+   justify-content: space-between;
+   align-items: flex-end;
+   z-index: 2;
+}
+
+/* Responsive styles for mobile devices */
+@media (max-width: 768px) {
+   nav {
+      padding: 1.5rem;
+   }
+
+   .site-name-main {
+      font-size: 2.5rem;
+   }
+
+   .site-name-sub {
+      font-size: 1rem;
+   }
+
+   .site-name-sub-wrapper {
+      gap: 0.5rem;
+   }
+
+   .decorative-line {
+      height: 3px;
+   }
+
+   .hero-footer {
+      padding: 1.5rem;
+   }
+}
+
+@media (max-width: 480px) {
+   nav {
+      padding: 1rem;
+   }
+
+   .site-name-main {
+      font-size: 2rem;
+   }
+
+   .site-name-sub {
+      font-size: 0.85rem;
+   }
+
+   .site-name-sub-wrapper {
+      gap: 0.4rem;
+   }
+
+   .decorative-line {
+      height: 2px;
+   }
+
+   .hero-footer {
+      padding: 1rem;
+   }
+
+   a,
+   p {
+      font-size: 0.75rem;
+   }
 }
