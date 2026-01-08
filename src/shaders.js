@@ -14,8 +14,20 @@ const fluidFragmentShader = `
   uniform vec2 uResolution;
   uniform float uDecay;
   uniform bool uIsMoving;
+  uniform float uTime;
+  uniform bool uIdleAnimation;
+  uniform float uIdleFadeOut;
 
   varying vec2 vUv;
+
+  // Hash function for pseudo-randomness
+  float hash(float n) {
+    return fract(sin(n) * 43758.5453);
+  }
+
+  float hash2(vec2 p) {
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+  }
 
   void main() {
     vec4 prevState = texture2D(uPrevTrails, vUv);
@@ -41,6 +53,91 @@ const fluidFragmentShader = `
 
         newValue += intensity;
       }
+    }
+
+    // Idle animation - random strokes moving across screen
+    if (uIdleAnimation) {
+      float idleIntensity = 0.0;
+
+      // Create 2 animated strokes with synchronized timing
+      for (float i = 0.0; i < 2.0; i++) {
+        // Timing: 2.5s animation + 5.5s pause = 8s total cycle
+        float strokeDuration = 2.5; // Stroke completes in 2.5 seconds
+        float pauseDuration = 5.5; // 5.5 second pause after strokes
+        float totalCycle = strokeDuration + pauseDuration;
+
+        // Both strokes share the same cycle (synchronized)
+        float cycleTime = mod(uTime, totalCycle);
+
+        // Only show strokes during active period
+        if (cycleTime > strokeDuration) {
+          continue; // In pause period - skip all strokes
+        }
+
+        // Stroke progress (0 to 1) during active period only
+        float progress = cycleTime / strokeDuration;
+
+        // Y position - centered and spaced apart
+        // First stroke at 0.4, second at 0.6 for clear vertical gap
+        float yPos = 0.4 + i * 0.2; // Creates gap: 0.4 and 0.6
+
+        // Random direction (left-to-right or right-to-left) - use hash2
+        float directionRand = hash2(vec2(i * 34.56, 78.90));
+
+        // Random start and end points - use hash2 for better variety
+        float rand1 = hash2(vec2(i * 45.67, 89.01));
+        float rand2 = hash2(vec2(i * 56.78, 90.12));
+
+        float startX, endX;
+
+        if (directionRand > 0.5) {
+          // Left to right movement - more constrained, can start/end in middle
+          startX = mix(-0.1, 0.6, rand1); // Start from left edge to middle-right
+          endX = mix(0.3, 1.1, rand2);     // End from middle-left to right edge
+        } else {
+          // Right to left movement - more constrained, can start/end in middle
+          startX = mix(0.4, 1.1, rand1);   // Start from middle-right to right edge
+          endX = mix(-0.1, 0.7, rand2);    // End from left edge to middle-right
+        }
+
+        // Current X position of stroke based on progress
+        float currentX = mix(startX, endX, progress);
+
+        // Direction for stroke segment rendering
+        float direction = sign(endX - startX);
+
+        // Stroke start and end points (small stroke segment)
+        vec2 strokeStart = vec2(currentX, yPos);
+        vec2 strokeEnd = vec2(currentX + direction * 0.15, yPos + (hash2(vec2(i * 67.89, 101.23)) - 0.5) * 0.1);
+
+        // Calculate distance to this stroke
+        vec2 strokeDir = normalize(strokeEnd - strokeStart);
+        float strokeLength = length(strokeEnd - strokeStart);
+
+        vec2 toPixel = vUv - strokeStart;
+        float projAlong = dot(toPixel, strokeDir);
+        projAlong = clamp(projAlong, 0.0, strokeLength);
+
+        vec2 closestPoint = strokeStart + projAlong * strokeDir;
+        float dist = length(vUv - closestPoint);
+
+        // Subtle stroke width
+        float lineWidth = 0.08;
+
+        // Fade in at start, fade out at end for smooth animation
+        float fadeIn = smoothstep(0.0, 0.15, progress);
+        float fadeOut = smoothstep(1.0, 0.85, progress);
+        float fade = fadeIn * fadeOut;
+
+        // Apply user interaction fade-out
+        fade *= uIdleFadeOut;
+
+        float strokeIntensity = smoothstep(lineWidth, 0.0, dist) * 0.15 * fade;
+
+        idleIntensity += strokeIntensity;
+      }
+
+      newValue += idleIntensity;
     }
 
     gl_FragColor = vec4(newValue, 0.0, 0.0, 1.0);

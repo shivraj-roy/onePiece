@@ -29,7 +29,10 @@ function App() {
       const mouse = new THREE.Vector2(0.5, 0.5);
       const prevMouse = new THREE.Vector2(0.5, 0.5);
       let isMoving = false;
-      let lastMoveTime = 0;
+      const startTime = performance.now();
+      let lastMoveTime = startTime; // Initialize to start time
+      let idleAnimationActive = false;
+      const idleDelayTime = 2000; // Start idle animation after 2 seconds
 
       const size = 500;
       const pingPongTargets = [
@@ -62,6 +65,9 @@ function App() {
             uResolution: { value: new THREE.Vector2(size, size) },
             uDecay: { value: 0.97 },
             uIsMoving: { value: false },
+            uTime: { value: 0.0 },
+            uIdleAnimation: { value: false },
+            uIdleFadeOut: { value: 1.0 },
          },
          vertexShader,
          fragmentShader: fluidFragmentShader,
@@ -84,7 +90,7 @@ function App() {
       });
 
       loadImage("/luffy-top.png", topTextureSize, displayMaterial, true);
-      loadImage("/luffy-bottom.png", bottomTextureSize, displayMaterial, false);
+      loadImage("/luffyElbaph-bottom.png", bottomTextureSize, displayMaterial, false);
 
       const planeGeometry = new THREE.PlaneGeometry(2, 2);
       const displayMesh = new THREE.Mesh(planeGeometry, displayMaterial);
@@ -230,8 +236,37 @@ function App() {
       function animate() {
          requestAnimationFrame(animate);
 
-         if (isMoving && performance.now() - lastMoveTime > 50) {
+         const currentTime = performance.now();
+
+         if (isMoving && currentTime - lastMoveTime > 50) {
             isMoving = false;
+         }
+
+         // Check if user has been idle for long enough to start idle animation
+         const timeSinceLastMove = currentTime - lastMoveTime;
+         const shouldBeIdle = timeSinceLastMove > idleDelayTime;
+
+         // Update time uniform (in seconds)
+         const elapsedTime = (currentTime - startTime) / 1000.0;
+         trailsMaterial.uniforms.uTime.value = elapsedTime;
+
+         // Simple approach: just turn animation on/off based on idle state
+         if (shouldBeIdle) {
+            idleAnimationActive = true;
+            trailsMaterial.uniforms.uIdleFadeOut.value = 1.0;
+         } else {
+            // User moved - start fade out
+            const currentFade = trailsMaterial.uniforms.uIdleFadeOut.value;
+            if (currentFade > 0.01) {
+               // Quick fade out
+               const newFade = currentFade * 0.85; // Exponential decay
+               trailsMaterial.uniforms.uIdleFadeOut.value = newFade;
+               idleAnimationActive = true; // Keep running while fading
+            } else {
+               // Fade complete, fully disable
+               trailsMaterial.uniforms.uIdleFadeOut.value = 0.0;
+               idleAnimationActive = false;
+            }
          }
 
          const prevTarget = pingPongTargets[currentTarget];
@@ -242,6 +277,7 @@ function App() {
          trailsMaterial.uniforms.uMouse.value.copy(mouse);
          trailsMaterial.uniforms.uPrevMouse.value.copy(prevMouse);
          trailsMaterial.uniforms.uIsMoving.value = isMoving;
+         trailsMaterial.uniforms.uIdleAnimation.value = idleAnimationActive;
 
          renderer.setRenderTarget(currentRenderTarget);
          renderer.render(simScene, camera);
