@@ -61,18 +61,16 @@ const fluidFragmentShader = `
 
       // Create 2 animated strokes with synchronized timing
       for (float i = 0.0; i < 2.0; i++) {
-        // Timing: 2.5s animation + 5.5s pause = 8s total cycle
+        // Timing: 2.5s animation + 7.5s pause = 10s total cycle
         float strokeDuration = 2.5; // Stroke completes in 2.5 seconds
-        float pauseDuration = 5.5; // 5.5 second pause after strokes
+        float pauseDuration = 7.5; // 7.5 second pause after strokes
         float totalCycle = strokeDuration + pauseDuration;
 
         // Both strokes share the same cycle (synchronized)
         float cycleTime = mod(uTime, totalCycle);
 
-        // Only show strokes during active period
-        if (cycleTime > strokeDuration) {
-          continue; // In pause period - skip all strokes
-        }
+        // Check if we're in the active period (not paused)
+        float isActive = step(cycleTime, strokeDuration);
 
         // Stroke progress (0 to 1) during active period only
         float progress = cycleTime / strokeDuration;
@@ -131,6 +129,9 @@ const fluidFragmentShader = `
 
         // Apply user interaction fade-out
         fade *= uIdleFadeOut;
+
+        // Apply isActive multiplier to hide strokes during pause
+        fade *= isActive;
 
         float strokeIntensity = smoothstep(lineWidth, 0.0, dist) * 0.15 * fade;
 
