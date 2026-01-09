@@ -67,7 +67,7 @@ function CountdownTimer() {
          const digitElements = stripRef.querySelectorAll('.digit');
          const digitHeight = digitElements.length > 0
             ? digitElements[0].offsetHeight
-            : 56; // fallback to 3.5rem (56px)
+            : 64; // fallback to 4rem (64px)
 
          // Calculate position based on actual height
          const yPosition = -digitValue * digitHeight;

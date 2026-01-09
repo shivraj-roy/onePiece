@@ -1,4 +1,4 @@
-# One Piece - Interactive Fluid Dynamics Landing Page
+# One Piece: Elbaph Arc - Interactive Fluid Dynamics Landing Page
 
 An interactive portfolio landing page featuring GPU-accelerated fluid dynamics that blend between two images based on mouse/touch interaction. Built with React, Three.js, and custom GLSL shaders.
 
@@ -51,10 +51,11 @@ onePiece/
 │   ├── luffy-top.png              # Top blending image
 │   ├── luffyElbaph-bottom.png     # Bottom blending image (Elbaf arc)
 │   ├── OnePieceOvertaken.mp3      # Background music track
+│   ├── favicon.png                # Site favicon (Straw Hat Jolly Roger)
 │   ├── Amanojaku.otf              # Custom font (subtitle)
 │   ├── Electroharmonix.otf        # Custom font (main title)
 │   └── Keinan Pop.ttf             # Custom font (Japanese support)
-├── index.html                # HTML entry point
+├── index.html                # HTML entry point (title: "One Piece: Elbaph Arc")
 ├── package.json              # Dependencies and scripts
 ├── vite.config.js            # Vite configuration
 └── eslint.config.js          # Linting rules
@@ -212,9 +213,11 @@ const difference = startDate - istTime;
 
 **Responsive Design:**
 - Dynamic height calculation for proper alignment across all screen sizes
-- Tablet (≤768px): 2.6rem digits with reduced spacing
-- Mobile (≤480px): 2rem digits with compact layout
+- Desktop: 3.5rem digits (height: 4rem) for maximum readability
+- Tablet (≤768px): 2.7rem digits with timezone label centered below countdown
+- Mobile (≤480px): 2.1rem digits with compact layout and bottom-centered timezone
 - Synchronized line-heights ensure perfect vertical centering
+- Timezone label repositions from right side to centered below on smaller devices
 
 ### 5. Language Toggle Component (LanguageToggle.jsx)
 

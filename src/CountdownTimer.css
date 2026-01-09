@@ -40,7 +40,7 @@
 }
 
 .timer-number-wrapper {
-   height: 3.5rem;
+   height: 4rem;
    display: flex;
    align-items: center;
    justify-content: center;
@@ -48,7 +48,7 @@
 }
 
 .digit-wrapper {
-   height: 3.5rem;
+   height: 4rem;
    overflow: hidden;
    display: flex;
    align-items: flex-start;
@@ -65,13 +65,13 @@
 
 .digit {
    font-family: "Electroharmonix", "DM Mono", monospace;
-   font-size: 3rem;
+   font-size: 3.5rem;
    font-weight: 600;
    color: #000;
    line-height: 1;
    display: block;
-   min-width: 2rem;
-   height: 3.5rem;
+   min-width: 2.2rem;
+   height: 4rem;
    display: flex;
    align-items: center;
    justify-content: center;
@@ -90,7 +90,7 @@
 
 .timer-separator {
    font-family: "Electroharmonix", "DM Mono", monospace;
-   font-size: 3rem;
+   font-size: 3.5rem;
    font-weight: 600;
    color: #cc2322;
    line-height: 1;
@@ -104,20 +104,33 @@
       top: 5rem;
    }
 
+   .timer-container {
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+   }
+
    .timezone-label {
+      position: static;
+      left: auto;
+      transform: none;
       font-size: 0.75rem;
+      text-align: center;
+      width: 100%;
+      display: block;
+      margin-top: 0.5rem;
    }
 
    .digit {
-      font-size: 2.2rem;
-      min-width: 1.4rem;
-      height: 2.6rem;
-      line-height: 2.6rem;
+      font-size: 2.7rem;
+      min-width: 1.6rem;
+      height: 3.1rem;
+      line-height: 3.1rem;
    }
 
    .timer-separator {
-      font-size: 2.2rem;
-      line-height: 2.6rem;
+      font-size: 2.7rem;
+      line-height: 3.1rem;
    }
 
    .timer-label {
@@ -126,7 +139,7 @@
 
    .timer-number-wrapper,
    .digit-wrapper {
-      height: 2.6rem;
+      height: 3.1rem;
    }
 
    .timer-units {
@@ -140,7 +153,7 @@
    }
 
    .timer-container {
-      gap: 0.5rem;
+      gap: 1rem;
    }
 
    .timer-units {
@@ -148,19 +161,26 @@
    }
 
    .timezone-label {
+      position: static;
+      left: auto;
+      transform: none;
       font-size: 0.6rem;
+      text-align: center;
+      width: 100%;
+      display: block;
+      margin-top: 0.5rem;
    }
 
    .digit {
-      font-size: 1.6rem;
-      min-width: 1rem;
-      height: 2rem;
-      line-height: 2rem;
+      font-size: 2.1rem;
+      min-width: 1.2rem;
+      height: 2.5rem;
+      line-height: 2.5rem;
    }
 
    .timer-separator {
-      font-size: 1.6rem;
-      line-height: 2rem;
+      font-size: 2.1rem;
+      line-height: 2.5rem;
    }
 
    .timer-label {
@@ -169,6 +189,6 @@
 
    .timer-number-wrapper,
    .digit-wrapper {
-      height: 2rem;
+      height: 2.5rem;
    }
 }
