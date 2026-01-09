@@ -6,6 +6,7 @@ import {
    displayFragmentShader,
 } from "./shaders.js";
 import MusicToggle from "./MusicToggle";
+import CountdownTimer from "./CountdownTimer";
 import "./App.css";
 
 function App() {
@@ -328,6 +329,8 @@ function App() {
             </div>
             <MusicToggle />
          </nav>
+
+         <CountdownTimer />
 
          <section className="hero">
             <canvas ref={canvasRef}></canvas>

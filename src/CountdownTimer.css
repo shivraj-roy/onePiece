@@ -1,0 +1,166 @@
+.countdown-timer {
+   position: fixed;
+   top: 6rem;
+   left: 50%;
+   transform: translateX(-50%);
+   z-index: 2;
+}
+
+.timer-container {
+   position: relative;
+   display: inline-block;
+}
+
+.timer-units {
+   display: flex;
+   align-items: flex-start;
+   gap: 0.5rem;
+}
+
+.timezone-label {
+   position: absolute;
+   left: calc(100% + 1rem);
+   top: 50%;
+   transform: translateY(-50%);
+   font-family: "Righteous", "DM Mono", monospace;
+   font-size: 0.9rem;
+   font-weight: 600;
+   color: #000;
+   opacity: 0.6;
+   text-transform: uppercase;
+   letter-spacing: 0.1em;
+   white-space: nowrap;
+}
+
+.timer-unit {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 0.3rem;
+}
+
+.timer-number-wrapper {
+   height: 3.5rem;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: 0.1rem;
+}
+
+.digit-wrapper {
+   height: 3.5rem;
+   overflow: hidden;
+   display: flex;
+   align-items: flex-start;
+   justify-content: center;
+   position: relative;
+}
+
+.digit-strip {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   will-change: transform;
+}
+
+.digit {
+   font-family: "Electroharmonix", "DM Mono", monospace;
+   font-size: 3rem;
+   font-weight: 600;
+   color: #000;
+   line-height: 1;
+   display: block;
+   min-width: 2rem;
+   height: 3.5rem;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   text-align: center;
+}
+
+.timer-label {
+   font-family: "Righteous", "DM Mono", monospace;
+   font-size: 0.7rem;
+   font-weight: 500;
+   color: #000;
+   opacity: 0.6;
+   text-transform: lowercase;
+   letter-spacing: 0.05em;
+}
+
+.timer-separator {
+   font-family: "Electroharmonix", "DM Mono", monospace;
+   font-size: 3rem;
+   font-weight: 600;
+   color: #cc2322;
+   line-height: 1;
+   margin-top: 0.2rem;
+   opacity: 1;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+   .countdown-timer {
+      top: 5rem;
+   }
+
+   .timezone-label {
+      font-size: 0.75rem;
+   }
+
+   .digit {
+      font-size: 2.2rem;
+      min-width: 1.5rem;
+      height: 2.8rem;
+   }
+
+   .timer-separator {
+      font-size: 2.2rem;
+   }
+
+   .timer-label {
+      font-size: 0.6rem;
+   }
+
+   .timer-number-wrapper,
+   .digit-wrapper {
+      height: 2.8rem;
+   }
+}
+
+@media (max-width: 480px) {
+   .countdown-timer {
+      top: 4.5rem;
+   }
+
+   .timer-container {
+      gap: 0.6rem;
+   }
+
+   .timer-units {
+      gap: 0.3rem;
+   }
+
+   .timezone-label {
+      font-size: 0.65rem;
+   }
+
+   .digit {
+      font-size: 1.8rem;
+      min-width: 1.2rem;
+      height: 2.3rem;
+   }
+
+   .timer-separator {
+      font-size: 1.8rem;
+   }
+
+   .timer-label {
+      font-size: 0.5rem;
+   }
+
+   .timer-number-wrapper,
+   .digit-wrapper {
+      height: 2.3rem;
+   }
+}

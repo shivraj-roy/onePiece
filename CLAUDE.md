@@ -9,6 +9,7 @@ This project creates an immersive visual experience where user movements generat
 ## Features
 
 - **GPU-Accelerated Fluid Simulation**: Custom GLSL shaders for real-time particle physics
+- **Countdown Timer**: Animated flip-clock style countdown to April 5, 2026 with GSAP rolling digits
 - **Idle Animation**: Automated brush strokes appear after 2 seconds of inactivity with synchronized timing
 - **Music Playback**: Interactive music toggle with GSAP-animated wave bars and smooth fade in/out
 - **Ping-Pong Rendering**: Advanced texture swapping technique for temporal effects
@@ -36,9 +37,11 @@ onePiece/
 │   ├── main.jsx              # React entry point
 │   ├── App.jsx               # Main component with WebGL logic
 │   ├── MusicToggle.jsx       # Music player toggle component
+│   ├── CountdownTimer.jsx    # Countdown timer component
 │   ├── shaders.js            # GLSL shader definitions
 │   ├── App.css               # Component styling
 │   ├── MusicToggle.css       # Music toggle styling
+│   ├── CountdownTimer.css    # Countdown timer styling
 │   └── index.css             # Global styles
 ├── public/
 │   ├── luffy-top.png              # Top blending image
@@ -154,7 +157,55 @@ gsap.to(audioRef.current, {
 - **Staggered delays**: Each bar animates with slight offset for fluid motion
 - **Kill tweens**: Prevents animation conflicts when toggling quickly
 
-### 4. Ping-Pong Rendering Pattern
+### 4. Countdown Timer Component (CountdownTimer.jsx)
+
+Flip-clock style countdown timer to April 5, 2026 with odometer animation:
+
+**Visual Design:**
+- **Electroharmonix font**: Matches main "One Piece" title branding
+- **Red separators**: Colons styled with #cc2322 color
+- **IST timezone label**: Shows "IST (UTC+5:30)" for clarity
+- **Centered layout**: Timer perfectly centered with absolute-positioned timezone label
+
+**Odometer/Flip Animation:**
+```javascript
+// Each digit position contains vertical strip of 0-9
+const renderDigits = (value, unit) => {
+  return (
+    <div className="digit-strip">
+      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+        <span className="digit">{num}</span>
+      ))}
+    </div>
+  );
+};
+
+// Animate strip position to show correct digit
+const yPosition = -digitValue * 3.5; // Each digit is 3.5rem tall
+gsap.to(stripRef, {
+  y: `${yPosition}rem`,
+  duration: 0.6,
+  ease: 'power2.inOut',
+});
+```
+
+**Key features:**
+- **Independent digit animation**: Each digit (tens/ones) animates separately
+- **Vertical strip scrolling**: All digits 0-9 in vertical container, overflow hidden
+- **GSAP smooth transitions**: 0.6s easing when digits change
+- **IST timezone calculation**: Converts local time to Indian Standard Time (UTC+5:30)
+- **Countdown logic**: Calculates difference from target date to current IST time
+- **Format**: `86days:23hours:45min:12sec` with labels below numbers
+
+**Time calculation:**
+```javascript
+const startDate = new Date('2026-04-05T00:00:00+05:30');
+const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
+const istTime = new Date(now.getTime() + istOffset - now.getTimezoneOffset() * 60 * 1000);
+const difference = startDate - istTime;
+```
+
+### 5. Ping-Pong Rendering Pattern
 
 Uses two render targets that alternate each frame:
 
@@ -173,7 +224,7 @@ renderer.render(simScene, camera);
 
 This allows shaders to read the previous frame's state while writing the new frame.
 
-### 5. Image Blending (displayFragmentShader)
+### 6. Image Blending (displayFragmentShader)
 
 The display shader blends two images based on fluid values:
 
@@ -197,7 +248,7 @@ gl_FragColor = mix(bottomColor, topColor, mask);
 - `getCoverUV` function preserves aspect ratios
 - Smooth transitions using `smoothstep`
 
-### 6. Interaction System
+### 7. Interaction System
 
 Captures and normalizes mouse/touch coordinates:
 
@@ -215,7 +266,7 @@ if (performance.now() - lastMoveTime > 50) {
 }
 ```
 
-### 7. UI and Responsive Design
+### 8. UI and Responsive Design
 
 **Site Name:**
 - **Main title**: "One Piece" in Electroharmonix font (4rem, red #cc2322)
