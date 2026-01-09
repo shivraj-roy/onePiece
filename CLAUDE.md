@@ -9,13 +9,14 @@ This project creates an immersive visual experience where user movements generat
 ## Features
 
 - **GPU-Accelerated Fluid Simulation**: Custom GLSL shaders for real-time particle physics
-- **Countdown Timer**: Animated flip-clock style countdown to April 5, 2026 with GSAP rolling digits
+- **Countdown Timer**: Animated flip-clock style countdown to April 5, 2026 with GSAP rolling digits and IST timezone
+- **Language Toggle**: Switch between English and Japanese with glassmorphism UI
 - **Idle Animation**: Automated brush strokes appear after 2 seconds of inactivity with synchronized timing
 - **Music Playback**: Interactive music toggle with GSAP-animated wave bars and smooth fade in/out
 - **Ping-Pong Rendering**: Advanced texture swapping technique for temporal effects
 - **Interactive Controls**: Full mouse and touch support with smooth trail generation
 - **Smooth Transitions**: Idle animations fade out gracefully when user interacts
-- **Custom Typography**: Amanojaku and Electroharmonix fonts for distinctive branding
+- **Custom Typography**: Keinan Pop, Amanojaku and Electroharmonix fonts for distinctive branding
 - **Responsive Design**: Fully responsive layout optimized for desktop, tablet, and mobile devices
 - **Image Blending**: Seamless transitions between images based on fluid intensity
 - **Aspect Ratio Preservation**: CSS-like "cover" behavior for proper image scaling
@@ -34,21 +35,25 @@ This project creates an immersive visual experience where user movements generat
 ```
 onePiece/
 ├── src/
-│   ├── main.jsx              # React entry point
+│   ├── main.jsx              # React entry point with LanguageProvider
 │   ├── App.jsx               # Main component with WebGL logic
 │   ├── MusicToggle.jsx       # Music player toggle component
 │   ├── CountdownTimer.jsx    # Countdown timer component
+│   ├── LanguageToggle.jsx    # Language switcher component (EN/JP)
+│   ├── LanguageContext.jsx   # React Context for language state
 │   ├── shaders.js            # GLSL shader definitions
 │   ├── App.css               # Component styling
 │   ├── MusicToggle.css       # Music toggle styling
 │   ├── CountdownTimer.css    # Countdown timer styling
+│   ├── LanguageToggle.css    # Language toggle styling
 │   └── index.css             # Global styles
 ├── public/
 │   ├── luffy-top.png              # Top blending image
 │   ├── luffyElbaph-bottom.png     # Bottom blending image (Elbaf arc)
 │   ├── OnePieceOvertaken.mp3      # Background music track
 │   ├── Amanojaku.otf              # Custom font (subtitle)
-│   └── Electroharmonix.otf        # Custom font (main title)
+│   ├── Electroharmonix.otf        # Custom font (main title)
+│   └── Keinan Pop.ttf             # Custom font (Japanese support)
 ├── index.html                # HTML entry point
 ├── package.json              # Dependencies and scripts
 ├── vite.config.js            # Vite configuration
@@ -205,7 +210,63 @@ const istTime = new Date(now.getTime() + istOffset - now.getTimezoneOffset() * 6
 const difference = startDate - istTime;
 ```
 
-### 5. Ping-Pong Rendering Pattern
+**Responsive Design:**
+- Dynamic height calculation for proper alignment across all screen sizes
+- Tablet (≤768px): 2.6rem digits with reduced spacing
+- Mobile (≤480px): 2rem digits with compact layout
+- Synchronized line-heights ensure perfect vertical centering
+
+### 5. Language Toggle Component (LanguageToggle.jsx)
+
+EN/JP language switcher with glassmorphism design and React Context state management:
+
+**Visual Design:**
+- **Glassmorphism effect**: Semi-transparent background with backdrop blur
+- **Custom switch**: Animated toggle from Uiverse.io with red active state (#cc2322)
+- **Labels**: "EN" and "JP" positioned on both sides of switch
+- **Responsive**: White text with shadow for visibility on dark backgrounds
+
+**State Management:**
+```javascript
+// LanguageContext.jsx - Global language state
+export const translations = {
+  en: {
+    siteSubtitle: "Elbaph Arc",
+    countdown: { days: "days", hours: "hours", min: "min", sec: "sec" }
+  },
+  jp: {
+    siteSubtitle: "エルバフ編",
+    countdown: { days: "日", hours: "時間", min: "分", sec: "秒" }
+  }
+};
+
+// Components consume via useLanguage hook
+const { language, toggleLanguage, t } = useLanguage();
+```
+
+**Glassmorphism CSS:**
+```css
+.language-toggle-glass {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0.25rem;  /* Matches music toggle */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+```
+
+**Key features:**
+- **React Context API**: Global state shared across all components
+- **Keinan Pop font**: Japanese-compatible font for translatable text
+- **Real-time updates**: All text switches instantly when toggled
+- **Smooth animations**: Custom switch with hover lift effect
+- **Accessibility**: Proper ARIA labels and semantic HTML
+
+**Translatable Elements:**
+- Site subtitle: "Elbaph Arc" / "エルバフ編"
+- Countdown labels: "days, hours, min, sec" / "日, 時間, 分, 秒"
+
+### 6. Ping-Pong Rendering Pattern
 
 Uses two render targets that alternate each frame:
 
@@ -224,7 +285,7 @@ renderer.render(simScene, camera);
 
 This allows shaders to read the previous frame's state while writing the new frame.
 
-### 6. Image Blending (displayFragmentShader)
+### 7. Image Blending (displayFragmentShader)
 
 The display shader blends two images based on fluid values:
 
@@ -248,7 +309,7 @@ gl_FragColor = mix(bottomColor, topColor, mask);
 - `getCoverUV` function preserves aspect ratios
 - Smooth transitions using `smoothstep`
 
-### 7. Interaction System
+### 8. Interaction System
 
 Captures and normalizes mouse/touch coordinates:
 
@@ -266,7 +327,7 @@ if (performance.now() - lastMoveTime > 50) {
 }
 ```
 
-### 8. UI and Responsive Design
+### 9. UI and Responsive Design
 
 **Site Name:**
 - **Main title**: "One Piece" in Electroharmonix font (4rem, red #cc2322)

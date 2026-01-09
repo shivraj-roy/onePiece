@@ -7,10 +7,13 @@ import {
 } from "./shaders.js";
 import MusicToggle from "./MusicToggle";
 import CountdownTimer from "./CountdownTimer";
+import LanguageToggle from "./LanguageToggle";
+import { useLanguage } from "./LanguageContext";
 import "./App.css";
 
 function App() {
    const canvasRef = useRef(null);
+   const { t } = useLanguage();
 
    useEffect(() => {
       if (!canvasRef.current) return;
@@ -322,7 +325,7 @@ function App() {
                   <span className="site-name-main">One Piece</span>
                   <div className="site-name-sub-wrapper">
                      <div className="decorative-line decorative-line-left"></div>
-                     <span className="site-name-sub">Elbaph Arc</span>
+                     <span className="site-name-sub">{t.siteSubtitle}</span>
                      <div className="decorative-line decorative-line-right"></div>
                   </div>
                </a>
@@ -336,8 +339,7 @@ function App() {
             <canvas ref={canvasRef}></canvas>
 
             <div className="hero-footer">
-               <p>Elbaf Arc</p>
-               <p>2025</p>
+               <LanguageToggle />
             </div>
          </section>
       </>

@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { useLanguage } from "./LanguageContext";
 import "./CountdownTimer.css";
 
 function CountdownTimer() {
+   const { t } = useLanguage();
    const [timeData, setTimeData] = useState({
       days: 0,
       hours: 0,
@@ -60,19 +62,26 @@ function CountdownTimer() {
          if (!stripRef) return;
 
          const digitValue = parseInt(newDigit);
-         // Each digit is 3.5rem tall, move to show the correct digit
-         const yPosition = -digitValue * 3.5; // 3.5rem = height of each digit
+
+         // Get the actual digit height from the element
+         const digitElements = stripRef.querySelectorAll('.digit');
+         const digitHeight = digitElements.length > 0
+            ? digitElements[0].offsetHeight
+            : 56; // fallback to 3.5rem (56px)
+
+         // Calculate position based on actual height
+         const yPosition = -digitValue * digitHeight;
 
          // Kill any existing animations
          gsap.killTweensOf(stripRef);
 
          if (isInitial) {
             // Set initial position without animation
-            gsap.set(stripRef, { y: `${yPosition}rem` });
+            gsap.set(stripRef, { y: yPosition });
          } else {
             // Animate the strip to the correct position
             gsap.to(stripRef, {
-               y: `${yPosition}rem`,
+               y: yPosition,
                duration: 0.6,
                ease: "power2.inOut",
             });
@@ -144,7 +153,7 @@ function CountdownTimer() {
                   <div className="timer-number-wrapper">
                      {renderDigits(timeData.days, "days")}
                   </div>
-                  <span className="timer-label">days</span>
+                  <span className="timer-label">{t.countdown.days}</span>
                </div>
 
                <span className="timer-separator">:</span>
@@ -153,7 +162,7 @@ function CountdownTimer() {
                   <div className="timer-number-wrapper">
                      {renderDigits(timeData.hours, "hours")}
                   </div>
-                  <span className="timer-label">hours</span>
+                  <span className="timer-label">{t.countdown.hours}</span>
                </div>
 
                <span className="timer-separator">:</span>
@@ -162,7 +171,7 @@ function CountdownTimer() {
                   <div className="timer-number-wrapper">
                      {renderDigits(timeData.minutes, "minutes")}
                   </div>
-                  <span className="timer-label">min</span>
+                  <span className="timer-label">{t.countdown.min}</span>
                </div>
 
                <span className="timer-separator">:</span>
@@ -171,7 +180,7 @@ function CountdownTimer() {
                   <div className="timer-number-wrapper">
                      {renderDigits(timeData.seconds, "seconds")}
                   </div>
-                  <span className="timer-label">sec</span>
+                  <span className="timer-label">{t.countdown.sec}</span>
                </div>
             </div>
             <span className="timezone-label">IST (UTC+5:30)</span>
