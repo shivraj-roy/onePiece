@@ -77,9 +77,9 @@ const fluidFragmentShader = `
         // Stroke progress (0 to 1) during active period only
         float progress = cycleTime / strokeDuration;
 
-        // Y position - centered and spaced apart
-        // First stroke at 0.4, second at 0.6 for clear vertical gap
-        float yPos = 0.4 + i * 0.2; // Creates gap: 0.4 and 0.6
+        // Y position - shifted down (lower on screen) with spacing
+        // First stroke at 0.25, second at 0.5 for lower positioning
+        float yPos = 0.25 + i * 0.25; // Creates gap: 0.25 and 0.5
 
         // Random direction (left-to-right or right-to-left) - use hash2
         float directionRand = hash2(vec2(i * 34.56, 78.90));

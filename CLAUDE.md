@@ -114,7 +114,7 @@ float progress = cycleTime / strokeDuration;
 - **Random directions**: Strokes move left-to-right or right-to-left
 - **Variable paths**: Start/end positions randomized (can begin/end mid-screen)
 - **Smooth fade-out**: When user moves, strokes fade via exponential decay (multiplier *= 0.85)
-- **Centered placement**: Positioned at Y=0.4 and Y=0.6 for vertical spacing
+- **Lower placement**: Positioned at Y=0.25 and Y=0.5 for vertical spacing in lower half of screen
 
 **Fade-out logic (App.jsx):**
 ```javascript
