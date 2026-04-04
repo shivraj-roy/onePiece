@@ -61,6 +61,7 @@ function MusicToggle({ trackSrc = "/OnePieceOvertaken.mp3" }) {
             audioRef.current = null;
          }
       };
+   // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
 
    // Switch track when trackSrc changes

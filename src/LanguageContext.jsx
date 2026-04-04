@@ -2,6 +2,7 @@ import { createContext, useState, useContext } from "react";
 
 const LanguageContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const translations = {
    en: {
       siteSubtitle: "Elbaph Arc",
@@ -39,6 +40,7 @@ export function LanguageProvider({ children }) {
    );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useLanguage() {
    const context = useContext(LanguageContext);
    if (!context) {

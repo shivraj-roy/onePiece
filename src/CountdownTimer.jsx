@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useLanguage } from "./LanguageContext";
 import FancyButton from "./FancyButton";
+import WantedModal from "./WantedModal";
+import { ToastContainer, useToast } from "./Toast";
 import "./CountdownTimer.css";
 
 function CountdownTimer({ onComplete }) {
@@ -13,6 +15,8 @@ function CountdownTimer({ onComplete }) {
       seconds: 0,
    });
    const [isComplete, setIsComplete] = useState(false);
+   const [isModalOpen, setIsModalOpen] = useState(false);
+   const { toasts, addToast, removeToast } = useToast();
    const hasCalledComplete = useRef(false);
    const prevTimeData = useRef({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
@@ -140,18 +144,27 @@ function CountdownTimer({ onComplete }) {
 
    if (isComplete) {
       return (
-         <div className="countdown-timer countdown-complete">
-            <p className="wanted-pretext">
-               The World Government has eyes everywhere.
-               <br />
-               Time to claim your bounty, pirate.
-            </p>
-            <FancyButton
-               text="Generate Wanted Poster"
-               drawerTop="Coming Soon..."
-               drawerBottom="...Stay Tuned"
+         <>
+            <div className="countdown-timer countdown-complete">
+               <p className="wanted-pretext">
+                  The World Government has eyes everywhere.
+                  <br />
+                  Time to claim your bounty, pirate.
+               </p>
+               <FancyButton
+                  text="Generate Wanted Poster"
+                  drawerTop="Coming Soon..."
+                  drawerBottom="...Stay Tuned"
+                  onClick={() => setIsModalOpen(true)}
+               />
+            </div>
+            <WantedModal
+               isOpen={isModalOpen}
+               onClose={() => setIsModalOpen(false)}
+               addToast={addToast}
             />
-         </div>
+            <ToastContainer toasts={toasts} removeToast={removeToast} />
+         </>
       );
    }
 
