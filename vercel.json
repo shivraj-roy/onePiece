@@ -1,5 +1,9 @@
 {
    "rewrites": [
+      {
+         "source": "/__/auth/:path*",
+         "destination": "https://onepiece-is-real.firebaseapp.com/__/auth/:path*"
+      },
       { "source": "/api/(.*)", "destination": "/api/$1" }
    ]
 }
