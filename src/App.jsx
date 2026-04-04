@@ -262,8 +262,8 @@ function App() {
       });
 
       // --- Display Setup ---
-      const topTexture = createPlaceholderTexture("#0000ff");
-      const bottomTexture = createPlaceholderTexture("#ff0000");
+      const topTexture = createPlaceholderTexture("#e8e4de");
+      const bottomTexture = createPlaceholderTexture("#e8e4de");
       const topTextureSize = new THREE.Vector2(1, 1);
       const bottomTextureSize = new THREE.Vector2(1, 1);
 
