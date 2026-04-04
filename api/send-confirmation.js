@@ -2,19 +2,15 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export default async function handler(req, res) {
-   if (req.method !== "POST") {
-      return res.status(405).json({ error: "Method not allowed" });
-   }
-
-   const { email, name } = req.body;
+export async function POST(request) {
+   const { email, name } = await request.json();
 
    if (!email) {
-      return res.status(400).json({ error: "Email is required" });
+      return Response.json({ error: "Email is required" }, { status: 400 });
    }
 
    try {
-      await resend.emails.send({
+      const response = await resend.emails.send({
          from: "Straw Hat Crew <crew@mail.shivrajroy.in>",
          to: email,
          subject: "You're on the Crew, Pirate! 🏴‍☠️",
@@ -86,9 +82,14 @@ export default async function handler(req, res) {
          `,
       });
 
-      return res.status(200).json({ success: true });
+      if (response.error) {
+         console.error("Resend error:", response.error);
+         return Response.json({ error: response.error }, { status: 500 });
+      }
+
+      return Response.json({ success: true });
    } catch (error) {
       console.error("Resend error:", error);
-      return res.status(500).json({ error: "Failed to send email" });
+      return Response.json({ error: "Failed to send email" }, { status: 500 });
    }
 }
