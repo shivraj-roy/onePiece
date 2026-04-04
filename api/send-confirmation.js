@@ -11,7 +11,7 @@ export async function POST(request) {
 
    try {
       const response = await resend.emails.send({
-         from: "Straw Hat Crew <crew@mail.shivrajroy.in>",
+         from: "Straw Hat Crew <crew@updates.shivrajroy.in>",
          to: email,
          subject: "You're on the Crew, Pirate! 🏴‍☠️",
          html: `
