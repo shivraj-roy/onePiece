@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useLanguage } from "./LanguageContext";
+import FancyButton from "./FancyButton";
+import WantedModal from "./WantedModal";
+import { ToastContainer, useToast } from "./Toast";
 import "./CountdownTimer.css";
 
-function CountdownTimer() {
+function CountdownTimer({ onComplete }) {
    const { t } = useLanguage();
    const [timeData, setTimeData] = useState({
       days: 0,
@@ -11,6 +14,10 @@ function CountdownTimer() {
       minutes: 0,
       seconds: 0,
    });
+   const [isComplete, setIsComplete] = useState(false);
+   const [isModalOpen, setIsModalOpen] = useState(false);
+   const { toasts, addToast, removeToast } = useToast();
+   const hasCalledComplete = useRef(false);
    const prevTimeData = useRef({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
    const digitRefs = useRef({
@@ -30,17 +37,21 @@ function CountdownTimer() {
          if (difference > 0) {
             const days = Math.floor(difference / (1000 * 60 * 60 * 24));
             const hours = Math.floor(
-               (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+               (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
             );
             const minutes = Math.floor(
-               (difference % (1000 * 60 * 60)) / (1000 * 60)
+               (difference % (1000 * 60 * 60)) / (1000 * 60),
             );
             const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
             setTimeData({ days, hours, minutes, seconds });
          } else {
-            // If date has passed, show zeros
             setTimeData({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+            if (!hasCalledComplete.current) {
+               hasCalledComplete.current = true;
+               setIsComplete(true);
+               if (onComplete) onComplete();
+            }
          }
       };
 
@@ -48,7 +59,7 @@ function CountdownTimer() {
       const interval = setInterval(updateTimer, 1000);
 
       return () => clearInterval(interval);
-   }, []);
+   }, [onComplete]);
 
    // Initialize and animate individual digit changes with rolling effect
    useEffect(() => {
@@ -58,10 +69,9 @@ function CountdownTimer() {
          const digitValue = parseInt(newDigit);
 
          // Get the actual digit height from the element
-         const digitElements = stripRef.querySelectorAll('.digit');
-         const digitHeight = digitElements.length > 0
-            ? digitElements[0].offsetHeight
-            : 64; // fallback to 4rem (64px)
+         const digitElements = stripRef.querySelectorAll(".digit");
+         const digitHeight =
+            digitElements.length > 0 ? digitElements[0].offsetHeight : 64;
 
          // Calculate position based on actual height
          const yPosition = -digitValue * digitHeight;
@@ -70,10 +80,8 @@ function CountdownTimer() {
          gsap.killTweensOf(stripRef);
 
          if (isInitial) {
-            // Set initial position without animation
             gsap.set(stripRef, { y: yPosition });
          } else {
-            // Animate the strip to the correct position
             gsap.to(stripRef, {
                y: yPosition,
                duration: 0.6,
@@ -88,16 +96,13 @@ function CountdownTimer() {
          const newVal = String(timeData[unit]).padStart(2, "0");
          const oldVal = String(prevTimeData.current[unit]).padStart(2, "0");
 
-         // Check if this is initial render
          const isInitial =
             prevTimeData.current[unit] === 0 && timeData[unit] === 0;
 
-         // Animate first digit (tens place)
          if (newVal[0] !== oldVal[0] || isInitial) {
             animateDigit(digitRefs.current[unit][0], newVal[0], isInitial);
          }
 
-         // Animate second digit (ones place)
          if (newVal[1] !== oldVal[1] || isInitial) {
             animateDigit(digitRefs.current[unit][1], newVal[1], isInitial);
          }
@@ -105,8 +110,6 @@ function CountdownTimer() {
 
       prevTimeData.current = { ...timeData };
    }, [timeData]);
-
-   const formatNumber = (num) => String(num).padStart(2, "0");
 
    const renderDigits = (value, unit) => {
       return (
@@ -138,6 +141,31 @@ function CountdownTimer() {
          </>
       );
    };
+
+   if (isComplete) {
+      return (
+         <>
+            <div className="countdown-timer countdown-complete">
+               <p className="wanted-pretext">
+                  The World Government has eyes everywhere. Time to claim your
+                  bounty, pirate.
+               </p>
+               <FancyButton
+                  text="Generate Wanted Poster"
+                  drawerTop="Coming Soon..."
+                  drawerBottom="...Stay Tuned"
+                  onClick={() => setIsModalOpen(true)}
+               />
+            </div>
+            <WantedModal
+               isOpen={isModalOpen}
+               onClose={() => setIsModalOpen(false)}
+               addToast={addToast}
+            />
+            <ToastContainer toasts={toasts} removeToast={removeToast} />
+         </>
+      );
+   }
 
    return (
       <div className="countdown-timer">
