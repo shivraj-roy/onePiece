@@ -21,17 +21,11 @@ function CountdownTimer() {
    });
 
    useEffect(() => {
-      const startDate = new Date("2026-04-05T00:00:00+05:30"); // IST timezone
+      const startDate = new Date("2026-04-05T21:15:00+05:30"); // IST timezone
 
       const updateTimer = () => {
-         // Get current time in IST
          const now = new Date();
-         const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
-         const istTime = new Date(
-            now.getTime() + istOffset - now.getTimezoneOffset() * 60 * 1000
-         );
-
-         const difference = startDate - istTime; // Countdown TO the target date
+         const difference = startDate - now; // Both are UTC internally
 
          if (difference > 0) {
             const days = Math.floor(difference / (1000 * 60 * 60 * 24));
