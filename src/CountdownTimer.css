@@ -104,6 +104,7 @@
    align-items: center;
    justify-content: center;
    gap: 2.5rem;
+   margin-top: 2rem;
    animation: fadeSlideDown 0.8s ease-out both;
 }
 
@@ -127,6 +128,28 @@
    to {
       opacity: 1;
       transform: translateX(-50%) translateY(0);
+   }
+}
+
+/* Responsive styles for countdown-complete */
+@media (max-width: 768px) {
+   .countdown-complete {
+      gap: 1.5rem;
+   }
+
+   .wanted-pretext {
+      font-size: 0.85rem;
+   }
+}
+
+@media (max-width: 480px) {
+   .countdown-complete {
+      gap: 1.2rem;
+   }
+
+   .wanted-pretext {
+      font-size: 0.75rem;
+      line-height: 1.4;
    }
 }
 

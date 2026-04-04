@@ -164,6 +164,10 @@ canvas {
    .hero-footer {
       padding: 1.5rem;
    }
+
+   .celebrate-btn-wrapper {
+      bottom: 4.5rem;
+   }
 }
 
 @media (max-width: 480px) {
@@ -189,6 +193,10 @@ canvas {
 
    .hero-footer {
       padding: 1rem;
+   }
+
+   .celebrate-btn-wrapper {
+      bottom: 4rem;
    }
 
    a,

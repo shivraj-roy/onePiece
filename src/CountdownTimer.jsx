@@ -28,7 +28,7 @@ function CountdownTimer({ onComplete }) {
    });
 
    useEffect(() => {
-      const startDate = new Date(Date.now() + 15 * 1000); // TEST: 15 seconds from now
+      const startDate = new Date("2026-04-05T21:15:00+05:30"); // IST timezone
 
       const updateTimer = () => {
          const now = new Date();
@@ -37,10 +37,10 @@ function CountdownTimer({ onComplete }) {
          if (difference > 0) {
             const days = Math.floor(difference / (1000 * 60 * 60 * 24));
             const hours = Math.floor(
-               (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+               (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
             );
             const minutes = Math.floor(
-               (difference % (1000 * 60 * 60)) / (1000 * 60)
+               (difference % (1000 * 60 * 60)) / (1000 * 60),
             );
             const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
@@ -147,9 +147,8 @@ function CountdownTimer({ onComplete }) {
          <>
             <div className="countdown-timer countdown-complete">
                <p className="wanted-pretext">
-                  The World Government has eyes everywhere.
-                  <br />
-                  Time to claim your bounty, pirate.
+                  The World Government has eyes everywhere. Time to claim your
+                  bounty, pirate.
                </p>
                <FancyButton
                   text="Generate Wanted Poster"
