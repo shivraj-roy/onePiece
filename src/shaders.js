@@ -168,7 +168,6 @@ const displayFragmentShader = `
   uniform float uDpr;
   uniform vec2 uTopTextureSize;
   uniform vec2 uBottomTextureSize;
-
   varying vec2 vUv;
 
   vec2 getCoverUV(vec2 uv, vec2 textureSize) {

@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import * as THREE from "three";
+import confetti from "canvas-confetti";
 import {
    vertexShader,
    splatShader,
@@ -15,12 +16,69 @@ import {
 import MusicToggle from "./MusicToggle";
 import CountdownTimer from "./CountdownTimer";
 import LanguageToggle from "./LanguageToggle";
+import FancyButton from "./FancyButton";
 import { useLanguage } from "./LanguageContext";
 import "./App.css";
+
+const ONE_PIECE_COLORS = ["#cc2322", "#ffffff", "#d4a017", "#f5e6c8"];
+
+function fireConfettiSideCannons(durationMs) {
+   const end = Date.now() + durationMs;
+
+   function frame() {
+      if (Date.now() > end) return;
+
+      // Left cannon
+      confetti({
+         particleCount: 3,
+         angle: 60,
+         spread: 55,
+         origin: { x: 0, y: 0.6 },
+         colors: ONE_PIECE_COLORS,
+      });
+
+      // Right cannon
+      confetti({
+         particleCount: 3,
+         angle: 120,
+         spread: 55,
+         origin: { x: 1, y: 0.6 },
+         colors: ONE_PIECE_COLORS,
+      });
+
+      requestAnimationFrame(frame);
+   }
+
+   frame();
+}
 
 function App() {
    const canvasRef = useRef(null);
    const { t } = useLanguage();
+   const [isCelebrating, setIsCelebrating] = useState(false);
+   const autoConfettiTimer = useRef(null);
+
+   const handleCountdownComplete = useCallback(() => {
+      setIsCelebrating(true);
+
+      // Auto confetti after 15 seconds of staying on the page
+      autoConfettiTimer.current = setTimeout(() => {
+         fireConfettiSideCannons(6000);
+      }, 15000);
+   }, []);
+
+   const handleCelebrate = useCallback(() => {
+      fireConfettiSideCannons(3000);
+   }, []);
+
+   // Cleanup auto-confetti timer on unmount
+   useEffect(() => {
+      return () => {
+         if (autoConfettiTimer.current) {
+            clearTimeout(autoConfettiTimer.current);
+         }
+      };
+   }, []);
 
    useEffect(() => {
       if (!canvasRef.current) return;
@@ -654,13 +712,31 @@ function App() {
                   </div>
                </a>
             </div>
-            <MusicToggle />
+            <MusicToggle
+               trackSrc={
+                  isCelebrating
+                     ? "/DrumsOfLiberation.mp3"
+                     : "/OnePieceOvertaken.mp3"
+               }
+            />
          </nav>
 
-         <CountdownTimer />
+         <CountdownTimer onComplete={handleCountdownComplete} />
 
          <section className="hero">
             <canvas ref={canvasRef}></canvas>
+
+            {isCelebrating && (
+               <div className="celebrate-btn-wrapper">
+                  <FancyButton
+                     text="Celebrate"
+                     drawerTop="The Giants Await"
+                     drawerBottom="Elbaph Arc Begins"
+                     onClick={handleCelebrate}
+                     hideCorners
+                  />
+               </div>
+            )}
 
             <div className="hero-footer">
                <LanguageToggle />

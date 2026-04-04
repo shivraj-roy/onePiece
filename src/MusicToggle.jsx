@@ -2,14 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import "./MusicToggle.css";
 
-function MusicToggle() {
+function MusicToggle({ trackSrc = "/OnePieceOvertaken.mp3" }) {
    const [isPlaying, setIsPlaying] = useState(false);
    const linesRef = useRef([]);
    const audioRef = useRef(null);
+   const currentTrackRef = useRef(trackSrc);
 
    useEffect(() => {
       // Initialize audio
-      audioRef.current = new Audio("/OnePieceOvertaken.mp3");
+      audioRef.current = new Audio(trackSrc);
       audioRef.current.loop = false;
       audioRef.current.volume = 0; // Start silent
 
@@ -61,6 +62,42 @@ function MusicToggle() {
          }
       };
    }, []);
+
+   // Switch track when trackSrc changes
+   useEffect(() => {
+      if (currentTrackRef.current === trackSrc) return;
+      currentTrackRef.current = trackSrc;
+
+      if (!audioRef.current) return;
+
+      const wasPlaying = !audioRef.current.paused;
+
+      if (wasPlaying) {
+         // Fade out current track, swap source, fade back in
+         gsap.killTweensOf(audioRef.current);
+         gsap.to(audioRef.current, {
+            volume: 0,
+            duration: 1.0,
+            ease: "power2.inOut",
+            onComplete: () => {
+               if (audioRef.current) {
+                  audioRef.current.pause();
+                  audioRef.current.src = trackSrc;
+                  audioRef.current.currentTime = 0;
+                  audioRef.current.play().catch(() => {});
+                  gsap.to(audioRef.current, {
+                     volume: 0.075,
+                     duration: 1.5,
+                     ease: "power2.inOut",
+                  });
+               }
+            },
+         });
+      } else {
+         audioRef.current.src = trackSrc;
+         audioRef.current.currentTime = 0;
+      }
+   }, [trackSrc]);
 
    useEffect(() => {
       if (isPlaying) {

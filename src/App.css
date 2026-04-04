@@ -116,6 +116,29 @@ canvas {
    z-index: 2;
 }
 
+.celebrate-btn-wrapper {
+   position: absolute;
+   left: 0;
+   right: 0;
+   bottom: 2rem;
+   display: flex;
+   justify-content: center;
+   z-index: 10;
+   pointer-events: auto;
+   animation: fadeSlideUp 0.8s ease-out both;
+}
+
+@keyframes fadeSlideUp {
+   from {
+      opacity: 0;
+      transform: translateY(20px);
+   }
+   to {
+      opacity: 1;
+      transform: translateY(0);
+   }
+}
+
 /* Responsive styles for mobile devices */
 @media (max-width: 768px) {
    nav {
