@@ -59,14 +59,17 @@ function WantedModal({ isOpen, onClose, addToast }) {
 
          // Send confirmation email
          try {
-            await fetch("/api/send-confirmation", {
+            const res = await fetch("/api/send-confirmation", {
                method: "POST",
                headers: { "Content-Type": "application/json" },
                body: JSON.stringify({ email, name }),
             });
-         } catch {
-            // Email send failure is non-critical — user is already saved
-            console.warn("Confirmation email failed to send");
+            if (!res.ok) {
+               const data = await res.json().catch(() => ({}));
+               console.warn("Confirmation email failed:", res.status, data);
+            }
+         } catch (emailErr) {
+            console.warn("Confirmation email request failed:", emailErr);
          }
 
          setStatus("success");
