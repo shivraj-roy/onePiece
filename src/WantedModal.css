@@ -42,18 +42,41 @@
    }
 }
 
+/* Poster Marquee */
+.wanted-poster-marquee {
+   margin: -1rem -2rem 1.5rem;
+   border-radius: 12px;
+   overflow: hidden;
+}
+
+.wanted-poster-img {
+   height: 120px;
+   width: auto;
+   margin: 0 6px;
+   border-radius: 4px;
+   object-fit: cover;
+   opacity: 0.85;
+   transition: opacity 0.2s;
+}
+
+.wanted-poster-img:hover {
+   opacity: 1;
+}
+
 .wanted-modal-close {
    position: absolute;
    top: 0.75rem;
    right: 1rem;
-   background: none;
+   background: rgba(20, 20, 20, 0.8);
    border: none;
-   color: #666;
+   color: #999;
    font-size: 1.5rem;
    cursor: pointer;
    line-height: 1;
-   padding: 0.25rem;
-   transition: color 0.2s;
+   padding: 0.25rem 0.4rem;
+   border-radius: 4px;
+   transition: color 0.2s, background 0.2s;
+   z-index: 2;
 }
 
 .wanted-modal-close:hover {
@@ -175,6 +198,15 @@
    .wanted-modal {
       padding: 2rem 1.5rem;
       margin: 0 1rem;
+   }
+
+   .wanted-poster-marquee {
+      margin: -0.75rem -1.5rem 1rem;
+   }
+
+   .wanted-poster-img {
+      height: 90px;
+      margin: 0 4px;
    }
 
    .wanted-modal-title {

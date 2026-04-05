@@ -2,7 +2,25 @@ import { useEffect, useRef, useState } from "react";
 import { signInWithPopup } from "firebase/auth";
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, googleProvider, db } from "./firebase";
+import Marquee from "react-fast-marquee";
 import "./WantedModal.css";
+
+const POSTER_IMAGES = [
+   "/preview/img-1.webp",
+   "/preview/img-2.jpeg",
+   "/preview/img-3.webp",
+   "/preview/img-4.jpeg",
+   "/preview/img-5.jpeg",
+   "/preview/img-6.jpeg",
+   "/preview/img-7.jpeg",
+   "/preview/img-8.webp",
+   "/preview/img-9.jpeg",
+   "/preview/img-10.jpeg",
+   "/preview/img-11.jpeg",
+   "/preview/img-12.jpeg",
+   "/preview/img-13.webp",
+   "/preview/img-14.webp",
+];
 
 function WantedModal({ isOpen, onClose, addToast }) {
    const [status, setStatus] = useState("idle"); // idle | loading | success | already | error
@@ -97,6 +115,27 @@ function WantedModal({ isOpen, onClose, addToast }) {
             <button className="wanted-modal-close" onClick={onClose}>
                &times;
             </button>
+
+            <div className="wanted-poster-marquee">
+               <Marquee
+                  autoFill
+                  speed={30}
+                  pauseOnHover
+                  gradient
+                  gradientColor="#141414"
+                  gradientWidth={40}
+               >
+                  {POSTER_IMAGES.map((src, i) => (
+                     <img
+                        key={i}
+                        src={src}
+                        alt="Wanted poster"
+                        className="wanted-poster-img"
+                        draggable={false}
+                     />
+                  ))}
+               </Marquee>
+            </div>
 
             {status === "idle" && (
                <>
