@@ -1,22 +1,25 @@
-import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { useLanguage } from "./LanguageContext";
+import { useEffect, useState } from "react";
 import FancyButton from "./FancyButton";
 import WantedModal from "./WantedModal";
 import { ToastContainer, useToast } from "./Toast";
 import "./CountdownTimer.css";
 
 function CountdownTimer({ onComplete }) {
-   const { t } = useLanguage();
-   const [timeData, setTimeData] = useState({
-      days: 0,
-      hours: 0,
-      minutes: 0,
-      seconds: 0,
-   });
-   const [isComplete, setIsComplete] = useState(false);
+   const [showContent, setShowContent] = useState(false);
    const [isModalOpen, setIsModalOpen] = useState(false);
    const { toasts, addToast, removeToast } = useToast();
+
+   // Skip countdown — show CTA with a delayed entrance animation
+   useEffect(() => {
+      const timer = setTimeout(() => {
+         setShowContent(true);
+         if (onComplete) onComplete();
+      }, 1500);
+
+      return () => clearTimeout(timer);
+   }, [onComplete]);
+
+   /* --- Countdown timer logic (kept for future use) ---
    const hasCalledComplete = useRef(false);
    const prevTimeData = useRef({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
@@ -110,7 +113,6 @@ function CountdownTimer({ onComplete }) {
 
       prevTimeData.current = { ...timeData };
    }, [timeData]);
-
    const renderDigits = (value, unit) => {
       return (
          <>
@@ -141,73 +143,31 @@ function CountdownTimer({ onComplete }) {
          </>
       );
    };
+   --- end countdown timer logic --- */
 
-   if (isComplete) {
-      return (
-         <>
-            <div className="countdown-timer countdown-complete">
-               <p className="wanted-pretext">
-                  The World Government has eyes everywhere. Time to claim your
-                  bounty, pirate.
-               </p>
-               <FancyButton
-                  text="Generate Wanted Poster"
-                  drawerTop="Coming Soon..."
-                  drawerBottom="...Stay Tuned"
-                  onClick={() => setIsModalOpen(true)}
-               />
-            </div>
-            <WantedModal
-               isOpen={isModalOpen}
-               onClose={() => setIsModalOpen(false)}
-               addToast={addToast}
-            />
-            <ToastContainer toasts={toasts} removeToast={removeToast} />
-         </>
-      );
-   }
+   if (!showContent) return null;
 
    return (
-      <div className="countdown-timer">
-         <div className="timer-container">
-            <div className="timer-units">
-               <div className="timer-unit">
-                  <div className="timer-number-wrapper">
-                     {renderDigits(timeData.days, "days")}
-                  </div>
-                  <span className="timer-label">{t.countdown.days}</span>
-               </div>
-
-               <span className="timer-separator">:</span>
-
-               <div className="timer-unit">
-                  <div className="timer-number-wrapper">
-                     {renderDigits(timeData.hours, "hours")}
-                  </div>
-                  <span className="timer-label">{t.countdown.hours}</span>
-               </div>
-
-               <span className="timer-separator">:</span>
-
-               <div className="timer-unit">
-                  <div className="timer-number-wrapper">
-                     {renderDigits(timeData.minutes, "minutes")}
-                  </div>
-                  <span className="timer-label">{t.countdown.min}</span>
-               </div>
-
-               <span className="timer-separator">:</span>
-
-               <div className="timer-unit">
-                  <div className="timer-number-wrapper">
-                     {renderDigits(timeData.seconds, "seconds")}
-                  </div>
-                  <span className="timer-label">{t.countdown.sec}</span>
-               </div>
-            </div>
-            <span className="timezone-label">IST (UTC+5:30)</span>
+      <>
+         <div className="countdown-timer countdown-complete">
+            <p className="wanted-pretext">
+               The World Government has eyes everywhere. Time to claim your
+               bounty, pirate.
+            </p>
+            <FancyButton
+               text="Generate Wanted Poster"
+               drawerTop="Coming Soon..."
+               drawerBottom="...Stay Tuned"
+               onClick={() => setIsModalOpen(true)}
+            />
          </div>
-      </div>
+         <WantedModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            addToast={addToast}
+         />
+         <ToastContainer toasts={toasts} removeToast={removeToast} />
+      </>
    );
 }
 
